@@ -7,13 +7,22 @@ def getWidthHight():
     height = 600
     return (width, height)
 
-speed = [3,3]
 def eventLoopLogic():
     frogrect = sprites.frog.getRect()
-    frogrect = frogrect.move(speed)
-    if frogrect.left <0 or frogrect.right > width:
-        speed[0] = -speed[0]
-    if frogrect.top < 0 or frogrect.bottom > height:
-        speed[1] = -speed[1]
-    sprites.frog.setRect(frogrect)
-    print(pygame.key.get_pressed())
+    keys = pygame.key.get_just_pressed()
+    if keys[pygame.K_s] or keys[pygame.K_DOWN]:
+        print('down')
+        frogrect = frogrect.move([0, 32])
+        sprites.frog.setRect(frogrect)
+    elif keys[pygame.K_w] or keys[pygame.K_UP]:
+        print('up')
+        frogrect = frogrect.move([0, -32])
+        sprites.frog.setRect(frogrect)
+    elif keys[pygame.K_a] or keys[pygame.K_LEFT]:
+        print('left')
+        frogrect = frogrect.move([-32, 0])
+        sprites.frog.setRect(frogrect)
+    elif keys[pygame.K_d] or keys[pygame.K_RIGHT]:
+        print('right')
+        frogrect = frogrect.move([32, 0])
+        sprites.frog.setRect(frogrect)
