@@ -12,15 +12,19 @@ def eventLoopLogic():
     keys = pygame.key.get_just_pressed()
     if keys[pygame.K_s] or keys[pygame.K_DOWN]:
         print('down')
+        sprites.frog.flip("d")
         sprites.frog.setMoveCounter([0, 32])
     elif keys[pygame.K_w] or keys[pygame.K_UP]:
         print('up')
+        sprites.frog.flip("u")
         sprites.frog.setMoveCounter([0, -32])
     elif keys[pygame.K_a] or keys[pygame.K_LEFT]:
         print('left')
+        sprites.frog.flip("l")
         sprites.frog.setMoveCounter([-32, 0])
     elif keys[pygame.K_d] or keys[pygame.K_RIGHT]:
         print('right')
+        sprites.frog.flip("r")
         sprites.frog.setMoveCounter([32, 0])
     moveCounter = sprites.frog.getMoveCounter()
     if moveCounter[0] !=0 or moveCounter[1]!=0:
