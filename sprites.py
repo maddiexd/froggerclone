@@ -34,7 +34,7 @@ class Character(pygame.sprite.Sprite):
         self.__currentDir = dir
         
 
-
+        
 def main():
     global frog
     frog = Character()
