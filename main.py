@@ -12,8 +12,11 @@ while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
-    logic.eventLoopLogic(screen)
+    logic.eventLoopLogic()
     screen.fill("#606060")
+    
+    
+    sprites.logs.draw(screen)
     screen.blit(sprites.frog.getSurface(), sprites.frog.getRect())
     sprites.vehicles.draw(screen)
     pygame.draw.rect(screen, '#000000', pygame.Rect(0, 0, 150, 600))
