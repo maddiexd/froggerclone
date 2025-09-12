@@ -1,6 +1,6 @@
 import pygame
 class Character(pygame.sprite.Sprite):
-    def __init__(self, location = (394, 550), image = './frog.png'):
+    def __init__(self, location = (388, 548), image = './frog.png'):
         pygame.sprite.Sprite.__init__(self)
         self.__location = location
         self.image = pygame.image.load(image)

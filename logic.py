@@ -33,17 +33,22 @@ def checkFrogMovement(keys, frogrect):
             sprites.frog.flip("r")
             sprites.frog.setMoveCounter([24, 0])
     moveCounter = sprites.frog.getMoveCounter() # executes moves in counter.
+    moveSpeed =  6
     if moveCounter[0] !=0 or moveCounter[1]!=0:
         if moveCounter[0] > 0:
-            moveamount = [moveCounter[0] - 8, 0]
+            newcounter = [moveCounter[0] - moveSpeed, 0]
+            moveamount = [moveSpeed, 0]
         if moveCounter[0] < 0:
-            moveamount = [moveCounter[0] + 8, 0]
+            newcounter = [moveCounter[0] + moveSpeed, 0]
+            moveamount = [-moveSpeed, 0]
         if moveCounter[1] > 0:
-            moveamount = [0, moveCounter[1] - 8]
+            newcounter = [0, moveCounter[1] - moveSpeed]
+            moveamount = [0, moveSpeed]
         if moveCounter[1] < 0:
-            moveamount = [0, moveCounter[1] + 8]
-        frogrect = frogrect.move(moveamount)
-        sprites.frog.setMoveCounter(moveamount)
+            newcounter = [0, moveCounter[1] + moveSpeed]
+            moveamount = [0, -moveSpeed]
+        frogrect.move_ip(moveamount)
+        sprites.frog.setMoveCounter(newcounter)
         sprites.frog.setRect(frogrect)
 
 def moveVehicles(screen):
