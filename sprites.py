@@ -1,10 +1,11 @@
 import pygame
 class Character(pygame.sprite.Sprite):
-    def __init__(self, location = (0,0), image = './frog.png'):
-        self.__location = location
+    def __init__(self, location = (394, 550), image = './frog.png'):
         pygame.sprite.Sprite.__init__(self)
+        self.__location = location
         self.image = pygame.image.load(image)
-        self.rect = self.image.get_rect()
+        self.image = pygame.transform.scale(self.image, (24, 24))
+        self.rect = pygame.Rect(self.__location, (24, 24))
         self.__moveCounter = [0, 0]
         self.__currentDir = "u"
         
@@ -34,10 +35,26 @@ class Character(pygame.sprite.Sprite):
         self.__currentDir = dir
         
 
-        
-def main():
-    global frog
-    frog = Character()
+class Vehicle(Character):
+    def __init__(self, location = (0, 100), speed = (5, 0)):
+        Character.__init__(self, location, image = './car.png')
+        self.__speed = speed
+        direction = lambda: "r" if self.__speed[0] > 0 else "l"
+        self.flip(direction())
+        self.__location = location
 
-if __name__ == main():
-    main()
+    def move(self):
+        self.rect.move_ip(self.__speed)
+        if self.rect[0] > 682:
+            self.rect = pygame.Rect((118, self.__location[1]), (24, 24))
+        elif self.rect[0] < 118:
+            self.rect = pygame.Rect((682, self.__location[1]), (24, 24))
+
+    def checkCollision(self, frog:Character):
+         return pygame.sprite.collide_rect(self, frog)
+
+
+
+frog = Character()
+vehicles = pygame.sprite.Group()
+vehicles.add(Vehicle([300, 500], (-6, 0)), Vehicle([150, 476], (7, 0)), Vehicle([500, 452], (-5, 0)), Vehicle([400, 428], (8, 0)), Vehicle([200, 404], (-6, 0)))

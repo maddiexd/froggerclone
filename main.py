@@ -12,9 +12,12 @@ while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
-    logic.eventLoopLogic()
-    screen.fill("#313131")
+    logic.eventLoopLogic(screen)
+    screen.fill("#606060")
     screen.blit(sprites.frog.getSurface(), sprites.frog.getRect())
+    sprites.vehicles.draw(screen)
+    pygame.draw.rect(screen, '#000000', pygame.Rect(0, 0, 150, 600))
+    pygame.draw.rect(screen, '#000000', pygame.Rect(650, 0, 150, 600))
     pygame.display.flip()
     clock.tick(60)
 pygame.quit()
