@@ -9,6 +9,7 @@ class Character(pygame.sprite.Sprite):
         self.rect = pygame.Rect(self.__location, size)
         self.__moveCounter = [0, 0]
         self.__currentDir = "u"
+        self.onlog = False
         
     def getSurface(self):
         return self.image
@@ -34,6 +35,14 @@ class Character(pygame.sprite.Sprite):
         }
         self.image = pygame.transform.rotate(self.image, angle[dir] - angle[self.__currentDir])
         self.__currentDir = dir
+
+    def die(self):
+        self.__location = (388, 548)
+        self.__size = (24, 24)
+        self.rect = pygame.Rect(self.__location, self.__size)
+        self.__moveCounter = [0, 0]
+        self.flip("u")
+        self.onlog = False
         
 
 class Vehicle(Character):
@@ -62,8 +71,13 @@ class Log(Vehicle):
         self.__speed = speed
 
     def checkCollision(self, frog:Character):
-        if pygame.sprite.collide_rect_ratio(0.1).__call__(self, frog):
+        hit = pygame.sprite.collide_rect_ratio(0.1).__call__(self, frog)
+        if hit:
             frog.rect.move_ip(self.__speed)
+            frog.onlog = True
+        else:
+            frog.onlog = False
+        return hit
 
 
 frog = Character()
@@ -91,4 +105,24 @@ logs.add(
     Log(location=(198, 332), speed = (-5, 0)),
     Log(location=(214, 332), speed = (-5, 0)),
     Log(location=(238, 332), speed = (-5, 0)),
+
+    Log(location=(150, 308), speed = (5, 0)),
+    Log(location=(174, 308), speed = (5, 0)),
+    Log(location=(198, 308), speed = (5, 0)),
+    Log(location=(214, 308), speed = (5, 0)),
+    Log(location=(238, 308), speed = (5, 0)),
+
+
+    Log(location=(150, 284), speed = (-5, 0)),
+    Log(location=(174, 284), speed = (-5, 0)),
+    Log(location=(198, 284), speed = (-5, 0)),
+    Log(location=(214, 284), speed = (-5, 0)),
+    Log(location=(238, 284), speed = (-5, 0)),
+
+
+    Log(location=(150, 260), speed = (5, 0)),
+    Log(location=(174, 260), speed = (5, 0)),
+    Log(location=(198, 260), speed = (5, 0)),
+    Log(location=(214, 260), speed = (5, 0)),
+    Log(location=(238, 260), speed = (5, 0)),
 )
