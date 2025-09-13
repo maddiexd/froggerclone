@@ -3,8 +3,8 @@ import sprites
 
 def getWidthHight(): # sets width and height to be used for window and game logic
     global width, height
-    width = 800
-    height = 600
+    width = 448
+    height = 512
     return (width, height)
 
 def eventLoopLogic(): # things to be run every frame in the event loop
@@ -17,24 +17,25 @@ def eventLoopLogic(): # things to be run every frame in the event loop
 def checkFrogMovement(keys, frogrect):
     moveCounter = sprites.frog.getMoveCounter()
     if not moveCounter[0] and not moveCounter[1]: # prevents input while moving
+        print(frogrect)
         if keys[pygame.K_s] or keys[pygame.K_DOWN]: # actions on key presses
             print('down')
             sprites.frog.flip("d") # rotates sprite
-            sprites.frog.setMoveCounter([0, 24]) # adds moves to counter
+            sprites.frog.setMoveCounter([0, 32]) # adds moves to counter
         elif keys[pygame.K_w] or keys[pygame.K_UP]:
             print('up')
             sprites.frog.flip("u")
-            sprites.frog.setMoveCounter([0, -24])
+            sprites.frog.setMoveCounter([0, -32])
         elif keys[pygame.K_a] or keys[pygame.K_LEFT]:
             print('left')
             sprites.frog.flip("l")
-            sprites.frog.setMoveCounter([-24, 0])
+            sprites.frog.setMoveCounter([-32, 0])
         elif keys[pygame.K_d] or keys[pygame.K_RIGHT]:
             print('right')
             sprites.frog.flip("r")
-            sprites.frog.setMoveCounter([24, 0])
+            sprites.frog.setMoveCounter([32, 0])
     moveCounter = sprites.frog.getMoveCounter() # executes moves in counter.
-    moveSpeed =  6 # how many pixels to move per frame, out of 24, 24 needs to be divisible by this number or bad things will happen
+    moveSpeed =  8 # how many pixels to move per frame, out of 32, 32 needs to be divisible by this number or bad things will happen
     if moveCounter[0] !=0 or moveCounter[1]!=0:
         if moveCounter[0] > 0:
             newcounter = [moveCounter[0] - moveSpeed, 0]
@@ -57,9 +58,20 @@ def moveVehicles():
         sprite.move()
         if sprite.checkCollision(sprites.frog): # collision checking with vehicles
             print('ouch!')
+            sprites.frog.die()
 
 def moveLogs():
+    collision = False
     for sprite in sprites.logs.sprites():
-        sprite.move()
-        sprite.checkCollision(sprites.frog)
+        # sprite.move()
+        if not collision:
+            collision = sprite.checkCollision(sprites.frog)
+            if collision:
+                collisionSprite = sprite
+    if collision:
+        # sprites.frog.rect.move_ip(collisionSprite.getSpeed())
+        pass
+    elif sprites.frog.getRect()[1] > 96 and sprites.frog.getRect()[1] < 256 and sprites.frog.getMoveCounter() == [0, 0]:
+        print('ouch water')
+        sprites.frog.die()
     

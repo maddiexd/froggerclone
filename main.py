@@ -14,13 +14,15 @@ while running:
             running = False
     logic.eventLoopLogic()
     screen.fill("#606060")
-    
-    
+    pygame.draw.rect(screen, "#2F8A2A", pygame.Rect(0, 450, 448, 32))
+    pygame.draw.rect(screen, "#2F8A2A", pygame.Rect(0, 256, 448, 32))
+    pygame.draw.rect(screen, "#52BBFF", pygame.Rect(0, 96, 448, 160))
     sprites.logs.draw(screen)
     screen.blit(sprites.frog.getSurface(), sprites.frog.getRect())
     sprites.vehicles.draw(screen)
-    pygame.draw.rect(screen, '#000000', pygame.Rect(0, 0, 150, 600))
-    pygame.draw.rect(screen, '#000000', pygame.Rect(650, 0, 150, 600))
+    
+    # pygame.draw.rect(screen, '#000000', pygame.Rect(0, 0, 150, 600))
+    # pygame.draw.rect(screen, '#000000', pygame.Rect(650, 0, 150, 600))
     pygame.display.flip()
     clock.tick(60)
 pygame.quit()
