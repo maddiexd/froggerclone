@@ -2,7 +2,7 @@ import pygame, sprites, logic
 
 pygame.init()
 size = logic.getWidthHight()
-screen = pygame.display.set_mode(size)
+screen = pygame.display.set_mode(size, flags=pygame.SCALED | pygame.RESIZABLE)
 clock = pygame.time.Clock()
 running = True
 

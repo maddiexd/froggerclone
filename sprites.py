@@ -1,6 +1,6 @@
-import pygame
+import pygame, random
 class Character(pygame.sprite.Sprite):
-    def __init__(self, location = (212, 454), image = './frog.png', size = (24, 24)):
+    def __init__(self, location = (224, 454), image = './frog.png', size = (24, 24)):
         pygame.sprite.Sprite.__init__(self)
         self.__location = location
         self.__size = size
@@ -37,7 +37,7 @@ class Character(pygame.sprite.Sprite):
         self.__currentDir = dir
 
     def die(self):
-        self.__location = (208, 454)
+        self.__location = (224, 454)
         self.rect = pygame.Rect(self.__location, self.__size)
         self.__moveCounter = [0, 0]
         self.flip("u")
@@ -55,10 +55,10 @@ class Vehicle(Character):
 
     def move(self):
         self.rect.move_ip(self.__speed)
-        if self.rect[0] > 544:
+        if self.rect[0] > 512:
             self.rect = pygame.Rect((-32, self.__location[1]), self.__size)
         elif self.rect[0] < -32:
-            self.rect = pygame.Rect((544, self.__location[1]), self.__size)
+            self.rect = pygame.Rect((512, self.__location[1]), self.__size)
 
     def checkCollision(self, frog:Character):
          return pygame.sprite.collide_rect(self, frog)
@@ -70,7 +70,7 @@ class Log(Vehicle):
         self.__speed = speed
 
     def checkCollision(self, frog:Character):
-        hit = pygame.sprite.collide_rect_ratio(0.5).__call__(self, frog)
+        hit = pygame.sprite.collide_rect_ratio(0.65).__call__(self, frog)
         return hit
     def getSpeed(self):
         return self.__speed
@@ -92,33 +92,21 @@ vehicles.add(
             Vehicle(location = [200, 420], speed = (2, 0)),
             Vehicle(location = [250, 420], speed = (2, 0)))
 logs = pygame.sprite.Group()
-logs.add(
-    Log(location=(150, 224), speed = (4, 0)),
-    Log(location=(182, 224), speed = (4, 0)),
-    Log(location=(214, 224), speed = (4, 0)),
-    Log(location=(246, 224), speed = (4, 0)),
-    Log(location=(278, 224), speed = (4, 0)),
+logLaneCoord = {
+    1: 96,
+    2: 128,
+    3: 160,
+    4: 192,
+    5: 224
+}
+for laneNo in range(1, 6):
+    logAmount = random.randint(5, 8)
 
-    Log(location=(150, 192), speed = (-4, 0)),
-    Log(location=(182, 192), speed = (-4, 0)),
-    Log(location=(214, 192), speed = (-4, 0)),
-    Log(location=(246, 192), speed = (-4, 0)),
-    Log(location=(278, 192), speed = (-4, 0)),
-
-    Log(location=(150, 160), speed = (4, 0)),
-    Log(location=(182, 160), speed = (4, 0)),
-    Log(location=(214, 160), speed = (4, 0)),
-    Log(location=(246, 160), speed = (4, 0)),
-    Log(location=(278, 160), speed = (4, 0)),
-
-    Log(location=(150, 128), speed = (-4, 0)),
-    Log(location=(182, 128), speed = (-4, 0)),
-    Log(location=(214, 128), speed = (-4, 0)),
-    Log(location=(246, 128), speed = (-4, 0)),
-    Log(location=(278, 128), speed = (-4, 0)),
-
-    Log(location=(150, 96), speed = (4, 0)),
-    Log(location=(182, 96), speed = (4, 0)),
-    Log(location=(214, 96), speed = (4, 0)),
-    Log(location=(246, 96), speed = (4, 0)),
-    Log(location=(278, 96), speed = (4, 0)))
+    speed = max(0.4, (random.random() * 2.5) + 0.8) * random.choice([1, -1])
+    sparseness = random.randint(0, 2)
+    logSize = max(1, (32 // logAmount) - sparseness)
+    lastX = random.randint(0, 4) * 32
+    for log in range(logAmount):
+        for piece in range(logSize):
+            logs.add(Log(((lastX+(32 * piece)), logLaneCoord[laneNo]), speed=(speed, 0)))
+        lastX += logSize * 32 + sparseness*32 + 32

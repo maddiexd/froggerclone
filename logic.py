@@ -63,13 +63,13 @@ def moveVehicles():
 def moveLogs():
     collision = False
     for sprite in sprites.logs.sprites():
-        # sprite.move()
+        sprite.move()
         if not collision:
             collision = sprite.checkCollision(sprites.frog)
             if collision:
                 collisionSprite = sprite
     if collision:
-        # sprites.frog.rect.move_ip(collisionSprite.getSpeed())
+        sprites.frog.rect.move_ip(collisionSprite.getSpeed())
         pass
     elif sprites.frog.getRect()[1] > 96 and sprites.frog.getRect()[1] < 256 and sprites.frog.getMoveCounter() == [0, 0]:
         print('ouch water')
