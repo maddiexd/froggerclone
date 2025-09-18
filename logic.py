@@ -13,11 +13,13 @@ def eventLoopLogic(): # things to be run every frame in the event loop
     checkFrogMovement(keys, frogrect)
     moveVehicles()
     moveLogs()
+    moveTurtles()
+    checkCollision()
 
 def checkFrogMovement(keys, frogrect):
     moveCounter = sprites.frog.getMoveCounter()
     if not moveCounter[0] and not moveCounter[1]: # prevents input while moving
-        print(frogrect)
+        # print(frogrect)
         if keys[pygame.K_s] or keys[pygame.K_DOWN]: # actions on key presses
             print('down')
             sprites.frog.flip("d") # rotates sprite
@@ -61,13 +63,19 @@ def moveVehicles():
             sprites.frog.die()
 
 def moveLogs():
-    collision = False
-    for sprite in sprites.logs.sprites():
+    for sprite in sprites.logs:
         sprite.move()
+
+def moveTurtles():
+    for sprite in sprites.turtles:
+        sprite.move()
+    
+
+def checkCollision():
+    collision = False
+    for sprite in sprites.turtles + sprites.logs:
         if not collision:
-            collision = sprite.checkCollision(sprites.frog)
-            if collision:
-                collisionSprite = sprite
+            collision, collisionSprite = sprite.checkCollision(sprites.frog)
     if collision:
         sprites.frog.rect.move_ip(collisionSprite.getSpeed())
         pass
