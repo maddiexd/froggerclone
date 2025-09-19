@@ -52,6 +52,7 @@ def checkFrogMovement(keys, frogrect):
             newcounter = [0, moveCounter[1] + moveSpeed]
             moveamount = [0, -moveSpeed]
         frogrect.move_ip(moveamount)
+        sprites.frog.checkBounds()
         sprites.frog.setMoveCounter(newcounter)
         sprites.frog.setRect(frogrect)
 
@@ -78,8 +79,13 @@ def checkCollision():
             collision, collisionSprite = sprite.checkCollision(sprites.frog)
     if collision:
         sprites.frog.rect.move_ip(collisionSprite.getSpeed())
+        sprites.frog.checkRiverBounds()
         pass
     elif sprites.frog.getRect()[1] > 96 and sprites.frog.getRect()[1] < 256 and sprites.frog.getMoveCounter() == [0, 0]:
         print('ouch water')
         sprites.frog.die()
+    for hedge in sprites.hedges.sprites():
+        if hedge.checkCollision(sprites.frog)[0] == True:
+            print('you missed the pond')
+            sprites.frog.die()
     

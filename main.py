@@ -16,11 +16,15 @@ while running:
     screen.fill("#606060")
     pygame.draw.rect(screen, "#2F8A2A", pygame.Rect(0, 450, 448, 32))
     pygame.draw.rect(screen, "#2F8A2A", pygame.Rect(0, 256, 448, 32))
-    pygame.draw.rect(screen, "#44D0BB", pygame.Rect(0, 96, 448, 160))
+    pygame.draw.rect(screen, "#44D0BB", pygame.Rect(0, 48, 448, 208))
+    pygame.draw.rect(screen, "#4D9629", pygame.Rect(0, 36, 448, 15))
+
+
     for log in sprites.logs:
         log.draw(screen)
     for turtle in sprites.turtles:
         turtle.draw(screen)
+    sprites.hedges.draw(screen)
     screen.blit(sprites.frog.getSurface(), sprites.frog.getRect())
     sprites.vehicles.draw(screen)
     
