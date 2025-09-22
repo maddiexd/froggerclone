@@ -274,20 +274,6 @@ class Hedge(pygame.sprite.Sprite):
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 frog = Character()
 vehicles = pygame.sprite.Group()
 # vehicles.add(
@@ -459,6 +445,8 @@ hedges = pygame.sprite.Group()
 
 for hedgeNo in range(0, 12, 2):
     hedges.add(Hedge(hedgeNo))
+
+
 
 
 # lastX = 0

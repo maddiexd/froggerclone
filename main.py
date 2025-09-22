@@ -26,6 +26,9 @@ while running:
         turtle.draw(screen)
     sprites.hedges.draw(screen)
     screen.blit(sprites.frog.getSurface(), sprites.frog.getRect())
+    for lane in range(len(logic.winLanes)):
+        sprites.hedges.add(sprites.Hedge(logic.winLanes[lane*2], 'happyfrog.png'))
+
     sprites.vehicles.draw(screen)
     
     # pygame.draw.rect(screen, '#000000', pygame.Rect(0, 0, 150, 600))
