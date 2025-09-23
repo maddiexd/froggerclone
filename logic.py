@@ -8,13 +8,23 @@ def getWidthHight(): # sets width and height to be used for window and game logi
     return (width, height)
 
 def eventLoopLogic(): # things to be run every frame in the event loop
+    global winLanes
+    try:
+        if winLane not in winLanes and winLane != None:
+            winLanes.append(winLane)
+        print(winLanes)
+    except:
+        winLanes = []
+        winLane = None
     frogrect = sprites.frog.getRect()
     keys = pygame.key.get_just_pressed()
     checkFrogMovement(keys, frogrect)
     moveVehicles()
     moveLogs()
     moveTurtles()
-    checkCollision()
+    winLane = checkCollision()
+    if winLane not in winLanes and winLane != None:
+        winLanes.append(winLane)
 
 def checkFrogMovement(keys, frogrect):
     moveCounter = sprites.frog.getMoveCounter()
@@ -52,6 +62,7 @@ def checkFrogMovement(keys, frogrect):
             newcounter = [0, moveCounter[1] + moveSpeed]
             moveamount = [0, -moveSpeed]
         frogrect.move_ip(moveamount)
+        sprites.frog.checkBounds()
         sprites.frog.setMoveCounter(newcounter)
         sprites.frog.setRect(frogrect)
 
@@ -72,14 +83,37 @@ def moveTurtles():
     
 
 def checkCollision():
+    winLane = None
     collision = False
-    for sprite in sprites.turtles + sprites.logs:
+    for sprite in sprites.turtles + sprites.logs: # checks the collision between the turtles/logs and frogs
         if not collision:
             collision, collisionSprite = sprite.checkCollision(sprites.frog)
     if collision:
-        sprites.frog.rect.move_ip(collisionSprite.getSpeed())
+        sprites.frog.rect.move_ip(collisionSprite.getSpeed()) # move the frog along with the log/turtle
+        sprites.frog.checkRiverBounds() # die if you move of the screen.
         pass
     elif sprites.frog.getRect()[1] > 96 and sprites.frog.getRect()[1] < 256 and sprites.frog.getMoveCounter() == [0, 0]:
-        print('ouch water')
+        print('ouch water') # dont go in the water, based on coordinates (sorry)
         sprites.frog.die()
+    elif sprites.frog.getRect()[1] < 72 and sprites.frog.getRect()[1] > 20:
+        print("you win") # check for a win based on coordinates.
+        winX = sprites.frog.getRect()[0]
+        # print(winX)
+        if winX < 100: # places the happy frogs based on the coordinates of the win.
+            winLane = 0
+        elif winX < 200:
+            winLane = 1
+        elif winX < 296:
+            winLane = 2
+        elif winX <  360:
+            winLane = 3
+        else:
+            winLane = 4
+        # print(winLane)
+        sprites.frog.die() # literally dies even though wins.
+    for hedge in sprites.hedges.sprites(): # check for bashing the hedges
+        if hedge.checkCollision(sprites.frog)[0] == True:
+            print('you missed the pond')
+            sprites.frog.die()
+    return winLane
     
