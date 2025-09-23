@@ -1,7 +1,13 @@
 import pygame, random
+
+
+'''
+This class is the base class for the cars, logs, turtles and the main class for the original frog player character.
+It uses a frame-by frame countdown system, in order to ensure the movement is smooth.
+'''
 class Character(pygame.sprite.Sprite):
     def __init__(self, location = (224, 454), image = './frog.png', size = (24, 24)):
-        pygame.sprite.Sprite.__init__(self)
+        pygame.sprite.Sprite.__init__(self) # initialise all reqired variables
         self.__location = location
         self.__size = size
         self.image = pygame.image.load(image)
@@ -59,7 +65,9 @@ class Character(pygame.sprite.Sprite):
         self.flip("u")
         self.onlog = False
         
-
+'''
+This is the basic vehicle class for the cars on the road. It adds wraparound and collision checking.
+'''
 class Vehicle(Character):
     def __init__(self, location = (0, 96), image = './car.png', speed = (5, 0), size = (24, 24)):
         Character.__init__(self, location, image, size)
@@ -79,6 +87,9 @@ class Vehicle(Character):
     def checkCollision(self, frog:Character):
          return pygame.sprite.collide_rect(self, frog)
 
+'''
+This is a log piece class, this is a 32x32 segment of log, with smaller hit boundaries for when the frog land on it.
+'''
 class LogItem(Vehicle):
     def __init__(self, location=[0, 356], image = 'log.png', speed=(5, 0), size = (32, 32)):
         super().__init__(location, image, speed, size)
@@ -95,6 +106,10 @@ class LogItem(Vehicle):
         self.rect.move_ip(self.__speed)
 
 
+'''
+This is the class for the overall log, with the ability to wrap around as a whole log instead of piece by piece
+ensuring the logs stay stuck together and are of even length and gap between them.
+'''
 class Log(pygame.sprite.Group):
     def __init__(self, size, gap, lane, startpos, speed, logAmount):
         super().__init__()
@@ -104,11 +119,11 @@ class Log(pygame.sprite.Group):
         self.__speed = speed
         self.__gap = gap
         self.__logAmount = logAmount
-        for piece in range(self.__size):
+        for piece in range(self.__size): # adds all the log pieces to the sprite group.
             super().add(LogItem([self.__startpos + (32 * piece + 1), logLaneCoord[self.__lane]], speed = speed))
         self.__loop = self.checkLoop()
         
-    def move(self):
+    def move(self): # movement with extra logic for wraparound
         # print(self.__logAmount)
         self.__loop = self.checkLoop()
         # print(self.calculateRunway())
@@ -122,7 +137,7 @@ class Log(pygame.sprite.Group):
             sprite.move()
             # print(super().sprites()[0].getRect())
 
-    def checkLoop(self):
+    def checkLoop(self): # checks for wrapping around at the end, dynamically adjusting the runway depending on log and gap size
         loop = False
         if super().sprites()[0].rect[0] > self.calculateRunway():
             loop = True
@@ -131,7 +146,7 @@ class Log(pygame.sprite.Group):
             # print("loop",self.__lane)
         return loop
     
-    def checkCollision(self, frog):
+    def checkCollision(self, frog): # pass through collision
         hitSprite = None
         hit = False
         for i, sprite in enumerate(super().sprites()):
@@ -140,20 +155,17 @@ class Log(pygame.sprite.Group):
                 hitSprite = sprite
         return hit, hitSprite
 
-    def draw(self, surface, bgd = None, special_flags = 0):
+    def draw(self, surface, bgd = None, special_flags = 0): # pass through drawing.
         return super().draw(surface, bgd, special_flags)
     
-    def calculateRunway(self):
+    def calculateRunway(self): # calculate length of lane depending on log and gap size
         runway = (self.__logAmount) * ((self.__size *32)+ self.__gap) // 2
         return runway
 
         
-
-class Alligator(Log):
-    def __init__(self, size, gap, lane, startpos, speed, logAmount):
-        super().__init__(size, gap, lane, startpos, speed, logAmount)
-
-
+'''
+Adjustting the logItem to add the ducking and changing the image
+'''
 class Turtle(LogItem):
     def __init__(self, location=[0, 356], image='turtleStage1.png', 
                  speed=(5, 0), 
@@ -171,7 +183,7 @@ class Turtle(LogItem):
         
         self.__currentDir = self.__direction()
 
-    def checkDuck(self):
+    def checkDuck(self): # creating timers and changing stage based on a 250 frame loop
         if self.__canDuck:
             if self.__duckCount < 50:
                 self.__duckCount += self.__duckIter
@@ -217,6 +229,10 @@ class Turtle(LogItem):
         }
         self.image = pygame.transform.rotate(self.image, angle[dir])
 
+
+'''
+Change some things for the turtles based on the log object to allow them to be all treated as one.
+'''
 class turtleGroup(Log):
     def __init__(self, size, gap, lane, startpos, speed, logAmount, ducking = False):
         super().__init__(size, gap, lane, startpos, speed, logAmount)
@@ -259,8 +275,9 @@ class turtleGroup(Log):
                 hitSprite = sprite
         return hit, hitSprite
 
-
-
+'''
+Adds the finishing hedges, which also gets reused for the happy frogs at the end, very simple sprite type.
+'''
 class Hedge(pygame.sprite.Sprite):
     def __init__(self, slot, image = 'hedge.png'):
         super().__init__()
@@ -273,24 +290,13 @@ class Hedge(pygame.sprite.Sprite):
          return pygame.sprite.collide_rect(self, frog), self
 
 
-
+# initialise variables to be used by other files.
 frog = Character()
 vehicles = pygame.sprite.Group()
-# vehicles.add(
-#             Vehicle(location = [150, 388], speed = (-3, 0)),
-#             Vehicle(location = [250, 388], speed = (-3, 0)),
-#             Vehicle(location = [550, 388], speed = (-3, 0)),
-#             Vehicle(location = [350, 356], speed = (5, 0)),
-#             Vehicle(location = [150, 356], speed = (5, 0)),
-#             Vehicle(location = [350, 324], speed = (-2, 0)),
-#             Vehicle(location = [400, 324], speed = (-2, 0)),
-#             Vehicle(location = [150, 292], speed = (-7, 0)),
-#             Vehicle(location = [200, 292], speed = (-7, 0)),
-#             Vehicle(location = [150, 420], speed = (2, 0)),
-#             Vehicle(location = [200, 420], speed = (2, 0)),
-#             Vehicle(location = [250, 420], speed = (2, 0)))
+
 logs = []
 turtles = []
+# dictionary to convert lanes to coordinates for the logs
 logLaneCoord = {
     1: 96,
     2: 128,
@@ -298,7 +304,7 @@ logLaneCoord = {
     4: 192,
     5: 224
 }
-
+# level data, s is size, l is length, g is the gap between
 logConfig = {
     0: {
         1: {
@@ -334,7 +340,7 @@ turtleConfig = {
         }
     }
 }
-
+# cars have more smarter entry naming, count is the amount of cars, offset is the initial offset the cars start from. Speed and gap are self-explanatory.
 carConfig = {
     0: {
         1: {
@@ -370,24 +376,17 @@ carConfig = {
 
     }
 }
+
+
+# add cars based on data
 for carLane in range(1, 6):
     config = carConfig[0][carLane]
     for car in range(config["count"]):
         vehicles.add(Vehicle((config["gap"]*car*32 + 32*config["offset"], 260+32*carLane), speed = (config["speed"], 0)))
 
 
-logLanes = [1, 3, 4]
-level = 0
-# for laneNo in range(3):
-#     speed = random.randint(1, 4)* pow(-1, (laneNo % 2))
-#     gapSize = random.randint(2, 4)
-#     logSize = random.randint(2, 6)
-#     logAmount = ((14 // (logSize+gapSize))+1)*2
-#     lastX = 0
-#     for log in range((logAmount//2) + 1):
-#         logs.append(Log(logSize, 32 * (gapSize), logLanes[laneNo], lastX, [speed, 0], logAmount))
-#         lastX = lastX + ((logSize) * 32) + (gapSize)*32
-
+logLanes = [1, 3, 4] # sets the lanes where the logs are
+level = 0 # level counter but there are no levels, but there could be in the future (never).
 for laneNo in range(3):
     speed = (logConfig[0][logLanes[laneNo]])["s"]
     gapSize = (logConfig[0][logLanes[laneNo]])["g"]
@@ -399,29 +398,10 @@ for laneNo in range(3):
         lastX = lastX + ((logSize) * 32) + (gapSize)*32
 
 
-turtleLanes = [2, 5]
-# for laneNo in range(2):
-#     speed = random.randint(1,2)* pow(-1, (laneNo % 2))
-#     gapSize = random.randint(1, 2)
-#     turtleGroupSize = random.randint(2, 3)
-#     turtleGroupAmount = ((14 // (turtleGroupSize+gapSize))+1)*2
-#     lastX = 0
-#     ducking = [random.randint(1, turtleGroupAmount), 
-#                random.randint(1, turtleGroupAmount), 
-#                random.randint(1, turtleGroupAmount), 
-#                random.randint(1, turtleGroupAmount)
-#                ]
-    
-#     for turtlegroup in range((turtleGroupAmount //2)+1):
-#         canDuck = (lambda: True if turtlegroup in ducking else False)
-#         turtles.append(turtleGroup(turtleGroupSize, 32 * (gapSize), 
-#                                    turtleLanes[laneNo], lastX, [speed, 0], 
-#                                    turtleGroupAmount, canDuck()
-#                                    )
-#                         )
-#         lastX = lastX + ((turtleGroupSize) * 32) + (gapSize)*32
+turtleLanes = [2, 5] # sets the lanes for the turtles
 
-for laneNo in range(2):
+
+for laneNo in range(2): # applies the turtles according to the saves
     speed = (turtleConfig[0][turtleLanes[laneNo]])["s"]
     gapSize = (turtleConfig[0][turtleLanes[laneNo]])["g"]
     turtleGroupSize = (turtleConfig[0][turtleLanes[laneNo]])["l"]
@@ -441,21 +421,8 @@ for laneNo in range(2):
                         )
         lastX = lastX + ((turtleGroupSize) * 32) + (gapSize)*32
 
+# add the hedges to the correct position
 hedges = pygame.sprite.Group()
 
 for hedgeNo in range(0, 12, 2):
     hedges.add(Hedge(hedgeNo))
-
-
-
-
-# lastX = 0
-# gapSize = 6
-# logSize = 7
-# logAmount = ((14 // (logSize+gapSize))+1)*2
-# print(logAmount)
-# for log in range(logAmount):
-#     logs.append(Log(logSize, 32 * (gapSize), 5, lastX, [5, 0], logAmount))
-#     lastX = lastX + ((logSize) * 32) + (gapSize)*32
-
-# totalRunway = (logLength + gapLength) * logAmount
